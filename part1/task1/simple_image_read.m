@@ -1,6 +1,11 @@
-function simple_image_read(input_filename,vol);
+function image = simple_image_read(input_filename,vol);
 
-sz = size(vol);
+vol_el = numel(vol);
+vol_sz = size(vol);
 
 binary_file = fopen(input_filename);
-fread(binary_file,sz,'int16')
+image = fread(binary_file,vol_el,'int16');
+
+image = reshape(image,vol_sz);
+
+fclose(binary_file);
