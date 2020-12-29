@@ -1,6 +1,8 @@
-function prob = bi_gaussian_pdf(x1,x2,mean_vec,covar_mat)
+function pdf = bi_gaussian_pdf(x,meanVector,cov)
 
-x = [x1,x2];
-prob = 1 / (2 * pi sqrt(det(covar_mat))) * exp(-1/(2) * (x - mean_vec).' * covar_mat^(-1) * (x - mean_vec));
+%     inverse of diagonal matrix is reciprocal of diagonal entries
+%     cov is diagonal matrix
 
-end
+
+pdf = 1 / (2 * pi * sqrt(det(cov))) * exp(-1/(2) * (x - meanVector) * inv(cov) * (x - meanVector)');
+

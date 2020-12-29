@@ -1,16 +1,16 @@
 load('data/example_image.mat');
 
-filename = 'example_image.sim';
+filename = 'data/image.sim';
+%
+simple_image_write(vol,voxdims,filename);
 
-simple_image_write(vol,filename);
-
-image = simple_image_read(filename,vol);
+[image, dims] = simple_image_read(filename,vol,voxdims);
 %%
-xaxis = voxdims(1)* 0:223;
-yaxis = voxdims(2)* 0:223;
+xaxis = dims(1)* 0:223;
+yaxis = dims(2)* 0:223;
 
 figure;
-imagesc(xaxis,yaxis,image(:,:,5));
+imagesc(xaxis,yaxis,image(:,:,15));
 colormap gray;
 colorbar;
 
