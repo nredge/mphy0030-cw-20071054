@@ -12,19 +12,12 @@ for ii = 1:samples
     x(ii,2) = randi(100);
 end
 
-meanVector = mean(x,1);
+meanVector = mean(x);
+covariance = cov(x);
 
-cov = zeros(2,2);
+pdf = bi_gaussian_pdf(x,meanVector,covariance);
 
-for ii = 1:samples
-    cov(1,1) = cov(1,1) + (x(ii,1) - meanVector(1))*(x(ii,1) - meanVector(1));
-    cov(1,2) = cov(1,2) + (x(ii,1) - meanVector(1))*(x(ii,2) - meanVector(2));
-    cov(2,1) = cov(2,1) + (x(ii,2) - meanVector(2))*(x(ii,1) - meanVector(1));
-    cov(2,2) = cov(2,2) + (x(ii,2) - meanVector(2))*(x(ii,2) - meanVector(2));
-end
 
-cov = cov / samples;
-pdf = bi_gaussian_pdf(x,meanVector,cov);
-%% 
-figure;
-surf(pdf(5000:5050,5000:5050));
+%%
+% 10th percentile
+
