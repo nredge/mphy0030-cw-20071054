@@ -1,7 +1,7 @@
 % two equal size sets: x1 and x2 i.e
 % x1 = 1:100;
 % x2 = 1:100;
-clear;
+
 
 x = zeros(10000,2);
 sz = size(x);
@@ -25,3 +25,6 @@ end
 
 cov = cov / samples;
 pdf = bi_gaussian_pdf(x,meanVector,cov);
+%% 
+figure;
+surf(pdf(5000:5050,5000:5050));
