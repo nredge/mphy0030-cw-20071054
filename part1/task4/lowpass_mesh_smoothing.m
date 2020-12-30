@@ -1,15 +1,27 @@
-function smooth = lowpass_mesh_smoothing(vertices,triangles,varargin,iterations,lambda,mu)
+function smoothed = lowpass_mesh_smoothing(vertices,triangles,iterations,lambda,mu_ratio)
 
-if length(varargin) == 0
+if nargin == 2
     iterations = 10;
     lambda = 0.9;
     mu = -1.02 * lambda;
-elseif length(varargin) == 1
+elseif nargin == 3
     lambda = 0.9;
     mu = -1.02 * lambda;
-elseif length(varargin) == 2
+elseif nargin == 4
      mu = -1.02 * lambda;
 else
-    ;
+   mu = mu_ratio * lambda;
 end
-gjg
+
+sz = size(vertices);
+n = sz(1);
+ omega = 1 / n;
+
+for ii = 1:iterations
+    
+    vertices = vertices + lambda * omega * (dsearchn(vertices,triangles,vertices) - vertices);
+    vertices = vertices + mu * omega * (dsearchn(vertices,triangles,vertices) - vertices);
+    
+end
+
+smoothed = vertices;
