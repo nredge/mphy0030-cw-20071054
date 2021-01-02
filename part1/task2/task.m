@@ -1,6 +1,3 @@
-% two equal size sets: x1 and x2 i.e
-% x1 = 1:100;
-% x2 = 1:100;
 
 x = zeros(10000,2);
 sz = size(x);
@@ -14,7 +11,7 @@ covariance = cov(x);
 
 pdf = bi_gaussian_pdf(x,meanVector,covariance);
 
-%
+%%
 x1lin = linspace(min(x(:,1)),max(x(:,1)),100);
 x2lin = linspace(min(x(:,2)),max(x(:,2)),100);
 
@@ -23,36 +20,20 @@ x2lin = linspace(min(x(:,2)),max(x(:,2)),100);
 f = scatteredInterpolant(x(:,1),x(:,2),pdf);
 interp_pdf = f(X1,X2);
 
-figure;
-surf(X1,X2,interp_pdf);
+% figure;
+% surf(X1,X2,interp_pdf);
 
 %% 50th percentile
-% ellipse = zeros(10,3);
-% idx = 1;
-% fun = @(X1,X2) f(X1,X2);
-% for ii = 1:100
-%     for jj = 1:100
-%         q = integral2(fun,x1lin(1),x1lin(ii),x2lin(1),x2lin(jj));
-%         if q == 0.5
-%             ellipse(idx,1) = x1lin(ii);
-%             ellipse(idx,2) = x2lin(jj);
-%             ellipse(idx,3) = interp_pdf(ii,jj);
-%             idx = idx +1;
-%         end
-%     end
-% end
 
 alpha = 0.5;
-ellipse = zeros(10,3);
+ellipse1 = zeros(3,1);
 idx = 1;
 % 
 for ii = 1:100
    for jj = 1:100
     c = ([x1lin(ii),x2lin(jj)] - meanVector) * inv(covariance) * ([x1lin(ii),x2lin(jj)] - meanVector)';
-    if abs(c - (-2*log(alpha))) <= 0.1
-        ellipse(idx,1) = x1lin(ii);
-        ellipse(idx,2) = x2lin(jj);
-        ellipse(idx,3) = interp_pdf(ii,jj);
+    if abs(c - (-2*log(alpha))) <= 0.001
+        ellipse1(idx) = interp_pdf(ii,jj);
         idx = idx +1;
     else
         ;
@@ -60,7 +41,52 @@ for ii = 1:100
    end
 end
 
+alpha = 0.9;
+ellipse2 = zeros(3,1);
+idx = 1;
+
+for ii = 1:100
+   for jj = 1:100
+    c = ([x1lin(ii),x2lin(jj)] - meanVector) * inv(covariance) * ([x1lin(ii),x2lin(jj)] - meanVector)';
+    if abs(c - (-2*log(alpha))) <= 0.001
+        ellipse2(idx) = interp_pdf(ii,jj);
+        idx = idx +1;
+    else
+        ;
+    end
+   end
+end
+
+alpha = 0.1;
+ellipse3 = zeros(3,1);
+idx = 1;
+
+for ii = 1:100
+   for jj = 1:100
+    c = ([x1lin(ii),x2lin(jj)] - meanVector) * inv(covariance) * ([x1lin(ii),x2lin(jj)] - meanVector)';
+    if abs(c - (-2*log(alpha))) <= 0.01
+        ellipse3(idx) = interp_pdf(ii,jj);
+        idx = idx +1;
+    else
+        ;
+    end
+   end
+end
+
+
+%% 
+contour_height1 = mean(ellipse1);
+contour_height2 = mean(ellipse2);
+contour_height3 = mean(ellipse3);
+
 figure;
-plot3(ellipse(:,1),ellipse(:,2),ellipse(:,3));
-% hold on
-% mesh(X1,X2,interp_pdf);
+surf(X1,X2,interp_pdf);
+hold on
+[M1,c1] =contour3(X1,X2,interp_pdf,[contour_height1 contour_height1],'r');
+c1.LineWidth = 2;
+hold on
+[M2,c2] =contour3(X1,X2,interp_pdf,[contour_height2 contour_height2],'c');
+c2.LineWidth = 2;
+hold on
+[M3,c3] =contour3(X1,X2,interp_pdf,[contour_height3 contour_height3],'m');
+c3.LineWidth = 2;

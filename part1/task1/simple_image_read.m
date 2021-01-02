@@ -5,10 +5,12 @@ vol_sz = size(vol);
 dims_sz = size(voxdims);
 
 binary_file = fopen(input_filename);
-image = fread(binary_file,vol_el,'int16');
+
+dims = fread(binary_file,dims_sz,'float32');
 
 fseek(binary_file,0,'cof');
-dims = fread(binary_file,dims_sz,'float32');
+
+image = fread(binary_file,vol_el,'int16');
 
 fclose(binary_file);
 

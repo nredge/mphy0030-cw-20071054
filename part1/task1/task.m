@@ -11,8 +11,19 @@ yaxis = dims(2)* 0:223;
 
 image = permute(image,[2 1 3]);
 
+z = randi(30,[1,3]);
+
 figure;
-imagesc(xaxis,yaxis,image(:,:,25));
+imagesc(xaxis,yaxis,image(:,:,z(1)));
 colormap gray;
 colorbar;
 
+figure;
+imagesc(xaxis,yaxis,image(:,:,z(2)));
+colormap gray;
+colorbar;
+
+figure;
+imagesc(xaxis,yaxis,image(:,:,z(3)));
+colormap gray;
+colorbar;

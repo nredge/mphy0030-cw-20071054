@@ -1,17 +1,18 @@
-function optimal = gradient_descent(quad, x, a, h, max_it, tol)
-it = 1;
+function optimal = gradient_descent(x, a, step_sz, max_iter, tol)
+iter = 1;
 delta = 1;
-while it <= max_it && delta >= tol
+
+while iter <= max_iter && delta >= tol
 grad = finite_difference_gradient(x,a);
 % grad_norm = norm(grad);
 
-newx = x - h * grad;
+newx = x - step_sz * grad;
 
-delta = quad(x,a) - quad (newx,a); 
+delta = quadratic_polynomial(a,x) - quadratic_polynomial(a,newx); 
 
 x = newx;
 
-it = it + 1;
+iter = iter + 1;
 
 end
 optimal = x;
