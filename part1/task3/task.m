@@ -20,3 +20,6 @@ tol = 0.001;
 test = gradient_descent(x,a,step_sz,max_iter,tol); 
 
 final = quadratic_polynomial(a,test);
+
+%% verify second order derivative
+grad_2 = second_differivative(test,a);
