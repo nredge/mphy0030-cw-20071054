@@ -4,13 +4,13 @@
 vertices = readmatrix('data/example_vertices.csv');
 triangles = readmatrix('data/example_triangles.csv');
 
-DTri = delaunay(vertices);
-TP = triangulation(triangles,vertices);
+% DTri = delaunay(vertices);
+% TP = triangulation(triangles,vertices);
 %%
-smoothed = lowpass_mesh_smoothing(vertices,TP);%,10,0.9,-1.02);
+smoothed = lowpass_mesh_smoothing(vertices,triangles,20);%,10,0.9,-1.02);
 %%
 figure;
 trimesh(triangles,vertices(:,1),vertices(:,2),vertices(:,3));
-%%
+%
 figure;
 trimesh(triangles,smoothed(:,1),smoothed(:,2),smoothed(:,3));

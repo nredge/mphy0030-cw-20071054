@@ -30,17 +30,17 @@ pdf = gaussian_pdf(x,meanVector,covariance); % call pdf function to obtain 10,00
 %% to plot a surface or mesh, the pdf values must be a matrix. To obtain this,
 % scattered interpolant was used with x and the pdf values to generate a
 % interpolant function, f
-f = scatteredInterpolant(x(:,1),x(:,2),x(:,3),pdf); % this function allows a matrix of pdf values to be generated for any given grid of x1 and x2 
+% f = scatteredInterpolant(x(:,1),x(:,2),x(:,3),pdf); % this function allows a matrix of pdf values to be generated for any given grid of x1 and x2 
 
 x1lin = linspace(min(x(:,1)),max(x(:,1)),100); % create an array on 100 values from the minimal of all x1 values to the maximum of x1 values
 x2lin = linspace(min(x(:,2)),max(x(:,2)),100); % create an array on 100 values from the minimal of all x2 values to the maximum of x2 values
 x3lin = linspace(min(x(:,3)),max(x(:,2)),100);
-
-[X1,X2,X3] = meshgrid(x1lin,x2lin,x3lin); % create a meshgrid using the above spacings
-
-interp_pdf = f(X1,X2,X3); % using the meshgrid, generate a 100x100 matrix of interpolated pdf values. Surf/mesh functions can now be used
-
-interp_pdf = max(interp_pdf,0); % set negative interpolated density values to zero
+% 
+% [X1,X2,X3] = meshgrid(x1lin,x2lin,x3lin); % create a meshgrid using the above spacings
+% 
+% interp_pdf = f(X1,X2,X3); % using the meshgrid, generate a 100x100 matrix of interpolated pdf values. Surf/mesh functions can now be used
+% 
+% interp_pdf = max(interp_pdf,0); % set negative interpolated density values to zero
 %%
 % figure;
 % plot3(x(:,1),x(:,2),x(:,3),'x');
@@ -56,33 +56,95 @@ fiftieth_prc = ordered(0.5*index); % 50th percentile
 tenth_prc = ordered(0.1*index); % 10th percentile
 %% 
 % ninetyvec = find(interp_pdf >= (ninety_prc - 0.01) & interp_pdf <=(ninety_prc + 0.01));
-ninetyvec = find(interp_pdf >= (ninety_prc - 0.001) & interp_pdf <=(ninety_prc + 0.001));
-[i1 i2 i3] = ind2sub([100 100 100],ninetyvec);
+ninetyvec = find(pdf >= (ninety_prc - 0.001) & pdf <=(ninety_prc + 0.001));
+% [i1 i2 i3] = ind2sub([100 100 100],ninetyvec);
 %%
 % figure;
 % plot3(x(ninetyvec,1),x(ninetyvec,2),x(ninetyvec,3),'x');
 
 
 %%
-dt = delaunay(x1lin(i1),x2lin(i2),x3lin(i3));
+dt = delaunay(x(ninetyvec,1),x(ninetyvec,2),x(ninetyvec,3));
 figure;
-trisurf(dt,x1lin(i1),x2lin(i2),x3lin(i3));
-
+trisurf(dt,x(ninetyvec,1),x(ninetyvec,2),x(ninetyvec,3));
+xlim([-5 5])
+ylim([-5 5])
+zlim([-5 5])
 %% 90th percentile
-% [V,D] = eig(covariance);
-% ax11 = meanVector' + 2.5*sqrt(D(1,1))*V(:,1); 
-% ax12 = meanVector' - 2.5*sqrt(D(1,1))*V(:,1);
+[V,D] = eig(covariance);
+ax90_1 = meanVector' + 2.5*sqrt(D(1,1))*V(:,1); 
+ax90_2 = meanVector' - 2.5*sqrt(D(1,1))*V(:,1);
+
+ax90_3 = meanVector' + 2.5*sqrt(D(2,2))*V(:,2); 
+ax90_4 = meanVector' - 2.5*sqrt(D(2,2))*V(:,2); 
+
+ax90_5 = meanVector' + 2.5*sqrt(D(3,3))*V(:,3);
+ax90_6 = meanVector' - 2.5*sqrt(D(3,3))*V(:,3); 
+
+% 50th percentile
+ax50_1 = meanVector' + 1.538*sqrt(D(1,1))*V(:,1); 
+ax50_2 = meanVector' - 1.538*sqrt(D(1,1))*V(:,1);
+
+ax50_3 = meanVector' + 1.538*sqrt(D(2,2))*V(:,2); 
+ax50_4 = meanVector' - 1.538*sqrt(D(2,2))*V(:,2); 
+
+ax50_5 = meanVector' + 1.538*sqrt(D(3,3))*V(:,3);
+ax50_6 = meanVector' - 1.538*sqrt(D(3,3))*V(:,3); 
+% 10th percentile
+ax10_1 = meanVector' + 0.764*sqrt(D(1,1))*V(:,1); 
+ax10_2 = meanVector' - 0.764*sqrt(D(1,1))*V(:,1);
+
+ax10_3 = meanVector' + 0.764*sqrt(D(2,2))*V(:,2); 
+ax10_4 = meanVector' - 0.764*sqrt(D(2,2))*V(:,2); 
+
+ax10_5 = meanVector' + 0.764*sqrt(D(3,3))*V(:,3);
+ax10_6 = meanVector' - 0.764*sqrt(D(3,3))*V(:,3); 
+
+
+ax90_1dist = norm(ax90_1 - ax90_2)/2;
+ax90_2dist = norm(ax90_3 - ax90_4)/2;
+ax90_3dist = norm(ax90_5 - ax90_6)/2;
+
+ax50_1dist = norm(ax50_1 - ax50_2)/2;
+ax50_2dist = norm(ax50_3 - ax50_4)/2;
+ax50_3dist = norm(ax50_5 - ax50_6)/2;
+
+ax10_1dist = norm(ax10_1 - ax10_2)/2;
+ax10_2dist = norm(ax10_3 - ax10_4)/2;
+ax10_3dist = norm(ax10_5 - ax10_6)/2;
 % 
-% ax21 = meanVector' + 2.5*sqrt(D(2,2))*V(:,2); 
-% ax22 = meanVector' - 2.5*sqrt(D(2,2))*V(:,2); 
 % 
-% ax31 = meanVector' + 2.5*sqrt(D(3,3))*V(:,3);
-% ax32 = meanVector' - 2.5*sqrt(D(3,3))*V(:,3); 
-% 
-% %
-% ax1dist = norm(ax11 - ax12);
-% ax2dist = norm(ax21 - ax22);
-% ax3dist = norm(ax31 - ax32);
-% %
-% 
-% ellipsoid(meanVector(1),meanVector(2),meanVector(3),ax1dist,ax2dist,ax3dist);
+xangle = acosd(V(1,1)/norm(V(:,1)));
+yangle = acosd(V(2,1)/norm(V(:,1)));
+zangle = acosd(V(3,1)/norm(V(:,1)));
+
+figure;
+subplot(3,1,1);
+[X1, X2, X3] = ellipsoid(meanVector(1),meanVector(2),meanVector(3),ax90_1dist,ax90_2dist,ax90_3dist);
+elip90 = surf(X1, X2, X3);
+rotate(elip90, [1 0 0], xangle);
+rotate(elip90, [0 1 0], -1*yangle);
+% rotate(elip90, [0 0 1], zangle);
+xlim([-5 5])
+ylim([-5 5])
+zlim([-5 5])
+
+subplot(3,1,2);
+[X1, X2, X3] = ellipsoid(meanVector(1),meanVector(2),meanVector(3),ax50_1dist,ax50_2dist,ax50_3dist);
+elip50 = surf(X1, X2, X3);
+rotate(elip50, [1 0 0], xangle);
+rotate(elip50, [0 1 0], -1*yangle);
+% rotate(elip90, [0 0 1], zangle);
+xlim([-5 5])
+ylim([-5 5])
+zlim([-5 5])
+
+subplot(3,1,3);
+[X1, X2, X3] = ellipsoid(meanVector(1),meanVector(2),meanVector(3),ax10_1dist,ax10_2dist,ax10_3dist);
+elip10 = surf(X1, X2, X3);
+rotate(elip10, [1 0 0], xangle);
+rotate(elip10, [0 1 0], -1*yangle);
+% rotate(elip90, [0 0 1], zangle);
+xlim([-5 5])
+ylim([-5 5])
+zlim([-5 5])

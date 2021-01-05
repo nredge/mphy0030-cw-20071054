@@ -16,21 +16,47 @@ end
 sz = size(vertices);
 n = sz(1);
 omega = 1 / n;
-sum = 0;
+summ = zeros(1,3);
+k = 6;
+dist = zeros(n,1);
+% forward = zeros(642,3);
+smoothed = zeros(642,3);
 
 for ii = 1:iterations
-%     for jj = 1:n
-%         sum = sum + omega * (dsearchn(vertices,triangles,vertices) - vertices);
-%     end
-%     vertices = vertices + lambda * sum;
-%     vertices = vertices + mu * sum;
-%     
-%     vertices = vertices + lambda * omega * (dsearchn(vertices,triangles,vertices) - vertices);
-%     vertices = vertices + mu * omega * (dsearchn(vertices,triangles,vertices) - vertices);
     
-    vertices = vertices + lambda * omega * (nearestNeighbor(triangles,vertices) - vertices);
-    vertices = vertices + mu * omega * (nearestNeighbor(triangles,vertices) - vertices);
+    for jj = 1:n
+        
+        for kk = 1:n
+        dist(kk,:) = norm(vertices(kk,:) - vertices(jj,:)); 
+        end
+        
+        [d,ind] = sort(dist);
+        ind_closest = ind(2:k+1);
+        vertices_closest =  vertices(ind_closest,:);
+        
+        for ll = 1:k
+            summ = summ + (vertices_closest(ll,:) - vertices(jj,:));
+        end
+        
+        vertices(jj,:) = vertices(jj,:) + lambda * omega* summ; 
+        summ(:,:) = 0;
+    end 
    
+    for jj = 1:n
+        
+        for kk = 1:n 
+            dist(kk,:) = norm(vertices(kk,:) - vertices(jj,:));
+        end
+        
+        [d,ind] = sort(dist); 
+        ind_closest = ind(2:k+1); 
+        vertices_closest =  vertices(ind_closest,:);
+        
+        for ll = 1:k
+            summ = summ + (vertices_closest(ll,:) - vertices(jj,:));
+        end
+        
+        smoothed(jj,:) = vertices(jj,:) + mu * omega * summ; 
+        summ(:,:) = 0;
+    end
 end
-
-smoothed = vertices;
