@@ -32,9 +32,9 @@ pdf = gaussian_pdf(x,meanVector,covariance); % call pdf function to obtain 10,00
 % interpolant function, f
 % f = scatteredInterpolant(x(:,1),x(:,2),x(:,3),pdf); % this function allows a matrix of pdf values to be generated for any given grid of x1 and x2 
 
-x1lin = linspace(min(x(:,1)),max(x(:,1)),100); % create an array on 100 values from the minimal of all x1 values to the maximum of x1 values
-x2lin = linspace(min(x(:,2)),max(x(:,2)),100); % create an array on 100 values from the minimal of all x2 values to the maximum of x2 values
-x3lin = linspace(min(x(:,3)),max(x(:,2)),100);
+% x1lin = linspace(min(x(:,1)),max(x(:,1)),100); % create an array on 100 values from the minimal of all x1 values to the maximum of x1 values
+% x2lin = linspace(min(x(:,2)),max(x(:,2)),100); % create an array on 100 values from the minimal of all x2 values to the maximum of x2 values
+% x3lin = linspace(min(x(:,3)),max(x(:,2)),100);
 % 
 % [X1,X2,X3] = meshgrid(x1lin,x2lin,x3lin); % create a meshgrid using the above spacings
 % 
@@ -56,7 +56,7 @@ fiftieth_prc = ordered(0.5*index); % 50th percentile
 tenth_prc = ordered(0.1*index); % 10th percentile
 %% 
 % ninetyvec = find(interp_pdf >= (ninety_prc - 0.01) & interp_pdf <=(ninety_prc + 0.01));
-ninetyvec = find(pdf >= (ninety_prc - 0.001) & pdf <=(ninety_prc + 0.001));
+% ninetyvec = find(pdf >= (ninety_prc - 0.001) & pdf <=(ninety_prc + 0.001));
 % [i1 i2 i3] = ind2sub([100 100 100],ninetyvec);
 %%
 % figure;
@@ -64,12 +64,12 @@ ninetyvec = find(pdf >= (ninety_prc - 0.001) & pdf <=(ninety_prc + 0.001));
 
 
 %%
-dt = delaunay(x(ninetyvec,1),x(ninetyvec,2),x(ninetyvec,3));
-figure;
-trisurf(dt,x(ninetyvec,1),x(ninetyvec,2),x(ninetyvec,3));
-xlim([-5 5])
-ylim([-5 5])
-zlim([-5 5])
+% dt = delaunay(x(ninetyvec,1),x(ninetyvec,2),x(ninetyvec,3));
+% figure;
+% trisurf(dt,x(ninetyvec,1),x(ninetyvec,2),x(ninetyvec,3));
+% xlim([-5 5])
+% ylim([-5 5])
+% zlim([-5 5])
 %% 90th percentile
 [V,D] = eig(covariance);
 ax90_1 = meanVector' + 2.5*sqrt(D(1,1))*V(:,1); 
@@ -113,38 +113,41 @@ ax10_1dist = norm(ax10_1 - ax10_2)/2;
 ax10_2dist = norm(ax10_3 - ax10_4)/2;
 ax10_3dist = norm(ax10_5 - ax10_6)/2;
 % 
-% 
+%% 
 xangle = acosd(V(1,1)/norm(V(:,1)));
-yangle = acosd(V(2,1)/norm(V(:,1)));
-zangle = acosd(V(3,1)/norm(V(:,1)));
+yangle = acosd(V(2,2)/norm(V(:,2)));
+zangle = acosd(V(3,3)/norm(V(:,3)));
 
+%%
 figure;
-subplot(3,1,1);
+% subplot(3,1,1);
 [X1, X2, X3] = ellipsoid(meanVector(1),meanVector(2),meanVector(3),ax90_1dist,ax90_2dist,ax90_3dist);
 elip90 = surf(X1, X2, X3);
 rotate(elip90, [1 0 0], xangle);
-rotate(elip90, [0 1 0], -1*yangle);
-% rotate(elip90, [0 0 1], zangle);
+rotate(elip90, [0 1 0], yangle);
+rotate(elip90, [0 0 1], zangle);
 xlim([-5 5])
 ylim([-5 5])
 zlim([-5 5])
-
-subplot(3,1,2);
+%
+figure;
+% subplot(3,1,2);
 [X1, X2, X3] = ellipsoid(meanVector(1),meanVector(2),meanVector(3),ax50_1dist,ax50_2dist,ax50_3dist);
 elip50 = surf(X1, X2, X3);
 rotate(elip50, [1 0 0], xangle);
-rotate(elip50, [0 1 0], -1*yangle);
-% rotate(elip90, [0 0 1], zangle);
+rotate(elip50, [0 1 0], yangle);
+rotate(elip50, [0 0 1], zangle);
 xlim([-5 5])
 ylim([-5 5])
 zlim([-5 5])
-
-subplot(3,1,3);
+%
+figure;
+% subplot(3,1,3);
 [X1, X2, X3] = ellipsoid(meanVector(1),meanVector(2),meanVector(3),ax10_1dist,ax10_2dist,ax10_3dist);
 elip10 = surf(X1, X2, X3);
 rotate(elip10, [1 0 0], xangle);
-rotate(elip10, [0 1 0], -1*yangle);
-% rotate(elip90, [0 0 1], zangle);
+rotate(elip10, [0 1 0], yangle);
+rotate(elip10, [0 0 1], zangle);
 xlim([-5 5])
 ylim([-5 5])
 zlim([-5 5])
