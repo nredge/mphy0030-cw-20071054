@@ -15,7 +15,7 @@ end
 
 sz = size(vertices);
 n = sz(1);
-omega = 1 / n;
+% omega = 1 / n;
 summ = zeros(1,3);
 k = 6;
 dist = zeros(n,1);
@@ -35,10 +35,10 @@ for ii = 1:iterations
         vertices_closest =  vertices(ind_closest,:);
         
         for ll = 1:k
-            summ = summ + (vertices_closest(ll,:) - vertices(jj,:));
+            summ = summ + (1/k)*(vertices_closest(ll,:) - vertices(jj,:));
         end
         
-        vertices(jj,:) = vertices(jj,:) + lambda * omega* summ; 
+        vertices(jj,:) = vertices(jj,:) + lambda * summ; 
         summ(:,:) = 0;
     end 
    
@@ -53,10 +53,10 @@ for ii = 1:iterations
         vertices_closest =  vertices(ind_closest,:);
         
         for ll = 1:k
-            summ = summ + (vertices_closest(ll,:) - vertices(jj,:));
+            summ = summ + (1/k)*(vertices_closest(ll,:) - vertices(jj,:));
         end
         
-        smoothed(jj,:) = vertices(jj,:) + mu * omega * summ; 
+        smoothed(jj,:) = vertices(jj,:) + mu *  summ; 
         summ(:,:) = 0;
     end
 end
