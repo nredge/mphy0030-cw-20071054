@@ -56,17 +56,18 @@ fiftieth_prc = ordered(0.5*index); % 50th percentile
 tenth_prc = ordered(0.1*index); % 10th percentile
 %% 
 % ninetyvec = find(interp_pdf >= (ninety_prc - 0.01) & interp_pdf <=(ninety_prc + 0.01));
-% ninetyvec = find(pdf >= (ninety_prc - 0.001) & pdf <=(ninety_prc + 0.001));
+% ninety_prc = find(pdf >= (ninety_prc - 0.001) & pdf <=(ninety_prc + 0.001));
 % [i1 i2 i3] = ind2sub([100 100 100],ninetyvec);
 %%
 % figure;
 % plot3(x(ninetyvec,1),x(ninetyvec,2),x(ninetyvec,3),'x');
 
+ninety_points = find(pdf >= (ninety_prc - 0.001) & pdf <=(ninety_prc + 0.001));
 
-%%
-% dt = delaunay(x(ninetyvec,1),x(ninetyvec,2),x(ninetyvec,3));
-% figure;
-% trisurf(dt,x(ninetyvec,1),x(ninetyvec,2),x(ninetyvec,3));
+dt = delaunay(x(ninety_points,1),x(ninety_points,2),x(ninety_points,3));
+figure;
+trisurf(dt,x(ninety_points,1),x(ninety_points,2),x(ninety_points,3));
+
 % xlim([-5 5])
 % ylim([-5 5])
 % zlim([-5 5])

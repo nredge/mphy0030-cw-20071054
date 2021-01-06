@@ -15,9 +15,9 @@ end
 
 sz = size(vertices);
 n = sz(1);
-% omega = 1 / n;
 summ = zeros(1,3);
 k = 6;
+% omega = 1 / k;
 dist = zeros(n,1);
 % forward = zeros(642,3);
 smoothed = zeros(642,3);
@@ -60,3 +60,5 @@ for ii = 1:iterations
         summ(:,:) = 0;
     end
 end
+
+    
