@@ -7,10 +7,12 @@ classdef FreeFormDeformation
     end
     
     methods
-        function obj = untitled6(num_control,range)
+        function obj = untitled6(num,range)
             %UNTITLED6 Construct an instance of this class
             %   Detailed explanation goes here
-            obj.Property1 = inputArg1 + inputArg2;
+            obj.Property1 = linspace(range(1,1),range(1,2),num(1));
+            obj.Property2 = linspace(range(2,1),range(2,2),num(2));
+            obj.Property3 = linspace(range(3,1),range(3,2),num(3));
         end
         
         function optional_obj = un(image3d.obj,num_control)
