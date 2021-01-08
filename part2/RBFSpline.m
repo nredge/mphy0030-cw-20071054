@@ -16,23 +16,18 @@ classdef RBFSpline
         function alpha = fit(obj,source,target,lambda,sigma)
             
             p_sz = size(source); % source list of coords for each point 
-            n = sz(1);
-            K = zeros(n);
+            n = p_sz(1);
             W = zeros(n);
-%             Rg = exp(-r^2/(2*sigma^2));
+%            
             alpha = zeros(3,n);
-           for ii = 1:n
-            for jj = 1:n
-               r = norm(source(ii,1) - source(jj,1));
-               K(ii,jj) = exp(-r^2/(2*sigma(ii)^2));
-            end
-           end
+           K = kernel_gaussian(source,target,sigma);
            for ii = 1:n
               W(ii,ii) = 1/(sigma(ii)^2); 
            end
            q1 = target(:,1);
            q2 = target(:,2);
            q3 = target(:,3);
+           
         %Ax = b, least squares problem: (K+lambda*W^-1)Alpha = q_k
           mat = (K + lambda*inv(W))' * (K + lambda*inv(W));
           
@@ -53,11 +48,36 @@ classdef RBFSpline
         
         end
         
-        function transformed = evaluate(obj,query,control,alpha,parameters)
+        function u = evaluate(obj,x,control,alpha,sigma)
+            K = kernal_gaussian(x,control,sigma);
+            x_sz = size(x);
+            c_sz = size(control);
+            u = zeros(x_sz);
+            u(:,1) = x(:,1) + alpha() * sum(K());
             
+            for ii = 1:x_sz(1)
+                
+                u(ii,1) = x(ii,1) + sum(alpha(1,:) .* K(ii,:));
+                u(ii,2) = x(ii,2) + sum(alpha(2,:) .* K(ii,:));
+                u(ii,3) = x(ii,3) + sum(alpha(3,:) .* K(ii,:));
+                
+            end
         end
         
-        function K = kernel_gaussian(obj,query,control,parameters)
+        function K = kernel_gaussian(obj,x,control,sigma)
+            
+            q_sz = size(x); % source list of coords for each point 
+            c_sz = size(control);
+            m = q_sz(1);
+            l = c_sz(1);
+            K = zeros(l,m);
+            for ii = 1:l
+                for jj = 1:m
+                    
+            r1 = norm(x(ii,:) - control(jj,:));
+            K(ii,jj) = exp(-r1^2/(2*sigma(jj)^2));
+                end
+            end
             
         end
     end
