@@ -2,25 +2,25 @@ classdef RBFSpline
     %UNTITLED2 Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties
-        Property1
-    end
+%     properties
+%         alpha
+%     end
     
-    methods
-        function obj = 
-            %UNTITLED2 Construct an instance of this class
-            %   Detailed explanation goes here
-            obj.Property1 = inputArg1 + inputArg2;
-        end
+    methods (Static)
+%         function obj = 
+%             %UNTITLED2 Construct an instance of this class
+%             %   Detailed explanation goes here
+%             obj.Property1 = inputArg1 + inputArg2;
+%         end
         
-        function alpha = fit(obj,source,target,lambda)
-            
+        function alpha = fit(source,target,lambda)
+            sigma = 0.8;
             p_sz = size(source); % source list of coords for each point 
             n = p_sz(1);
 %             W = zeros(n);
 %            
             alpha = zeros(3,n);
-           K = kernel_gaussian(source,target,sigma);
+           K = RBFSpline.kernel_gaussian(source,source,sigma);
 %            for ii = 1:n
 %               W(ii,ii) = 1/(sigma(ii)^2); 
 %            end
@@ -28,27 +28,22 @@ classdef RBFSpline
            q2 = target(:,2);
            q3 = target(:,3);
            
-        %Ax = b, least squares problem: (K+lambda*W^-1)Alpha = q_k
-          mat = (K + lambda*eyes(n))' * (K + lambda*eyes(n));
-          
-          vec1 = (K + lambda*eyes(n))' * q1;
-          mat1 = cat(2,mat,vec1);
-          mat1 = rref(mat1);
-          alpha(1,:) = mat1;
+        %Ax = b, least squares problem: (K+lambda*W^-1)Alpha = q_k. x =
+        %pinv(A)*b
+          A = (K + lambda*eye(n));
+%           
+%           
+          alpha(1,:) = pinv(A)*q1;
          
-          vec2 = (K + lambda*eyes(n))' * q2;
-          mat2 = cat(2,mat,vec2);
-          mat2 = rref(mat2);
-          alpha(2,:) = mat2;
+%         
+          alpha(2,:) =pinv(A)*q2;
           
-          vec3 = (K + lambda*eyes(n))' * q3;
-          mat3 = cat(2,mat,vec3);
-          mat3 = rref(mat3);
-          alpha(3,:) = mat3;
+%          
+          alpha(3,:) = pinv(A)*q3;
         
         end
         
-        function u = evaluate(obj,x,control,alpha,sigma)
+        function u = evaluate(x,control,alpha,sigma)
             K = kernal_gaussian(x,control,sigma);
             x_sz = size(x);
             c_sz = size(control);
@@ -64,7 +59,7 @@ classdef RBFSpline
             end
         end
         
-        function K = kernel_gaussian(obj,x,control,sigma)
+        function K = kernel_gaussian(x,control,sigma)
             
             q_sz = size(x); % source list of coords for each point 
             c_sz = size(control);
@@ -75,7 +70,7 @@ classdef RBFSpline
                 for jj = 1:m
                     
             r1 = norm(x(ii,:) - control(jj,:));
-            K(ii,jj) = exp(-r1^2/(2*sigma(jj)^2));
+            K(ii,jj) = exp(-r1^2/(2*sigma^2));
                 end
             end
             

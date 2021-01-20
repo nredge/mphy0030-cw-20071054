@@ -3,31 +3,30 @@ classdef Image3D
     %   Detailed explanation goes here
     
     properties
-        sz
-        ind
+        
         range
-        X
-        Y
-        Z
+        XCoords
+        YCoords
+        ZCoords
     end
     
     methods
-        function image3d = image(vol,voxdims)
+        function image3d = Image3D(vol,voxdims)
             %UNTITLED6 Construct an instance of this class
             %   Detailed explanation goes here
-            image3d.sz = size(vol);
-            image3d.ind = numel(vol);
+            sz = size(vol);
+            ind = numel(vol);
             
-            x = 0:image3d.sz(1)*voxdims(1);
-            y = 0:image3d.sz(2)*voxdims(2);
-            z = 0:image3d.sz(3)*voxdims(3);
-           [image3d.X,image3d.Y,image3d.Z] = meshgrid(x,y,z);
+            x = (0:sz(1)-1)*voxdims(1);
+            y = (0:sz(2)-1)*voxdims(2);
+            z = (0:sz(3)-1)*voxdims(3);
+           [image3d.XCoords,image3d.YCoords,image3d.ZCoords] = meshgrid(x,y,z);
            
-%             [row,col,slice] = ind2sub(image3d.sz,1:image3d:ind);
-%             image3d.points = zeros(image3d.ind,3);
-%             for ii = 1:image3d.ind
-%                 image3d.points(ii,:) = [row(ii)*voxdims(1),col(ii)*voxdims(2),slice(ii)*voxdims(3)];
+%             obj.control = zeros(prod(num),3);
+%             for ii = 1:prod(num)
+%                obj.control(ii,:) = [obj.x(ii),obj.y(ii),obj.z(ii)]; 
 %             end
+            
             min_x = min(x);
             max_x = max(x);
             min_y = min(y);
