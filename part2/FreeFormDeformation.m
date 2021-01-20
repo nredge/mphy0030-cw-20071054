@@ -39,9 +39,9 @@ classdef FreeFormDeformation
             
             [obj.X,obj.Y,obj.Z] = meshgrid(obj.x,obj.y,obj.z);
             
-            obj.image_pts = zeros(prod(num),3);
+            obj.image_control = zeros(prod(num),3);
             for ii = 1:prod(num)
-               obj.image_pts(ii,:) = [obj.X(ii),obj.Y(ii),obj.Z(ii)]; 
+               obj.image_control(ii,:) = [obj.X(ii),obj.Y(ii),obj.Z(ii)]; 
             end
         end 
          

@@ -8,6 +8,7 @@ classdef Image3D
         XCoords
         YCoords
         ZCoords
+%         coords
     end
     
     methods
@@ -22,11 +23,11 @@ classdef Image3D
             z = (0:sz(3)-1)*voxdims(3);
            [image3d.XCoords,image3d.YCoords,image3d.ZCoords] = meshgrid(x,y,z);
            
-%             obj.control = zeros(prod(num),3);
-%             for ii = 1:prod(num)
-%                obj.control(ii,:) = [obj.x(ii),obj.y(ii),obj.z(ii)]; 
+%             image3d.coords = zeros(prod(sz),3);
+%             for ii = 1:prod(sz)
+%                image3d.coords(ii,:) = [image3d.XCoords(ii),image3d.YCoords(ii),image3d.ZCoords(ii)]; 
 %             end
-            
+%             
             min_x = min(x);
             max_x = max(x);
             min_y = min(y);

@@ -43,20 +43,31 @@ classdef RBFSpline
         
         end
         
-        function u = evaluate(x,control,alpha,sigma)
-            K = kernal_gaussian(x,control,sigma);
+        function [ux,uy,uz] = evaluate(x,y,z,control,alpha,sigma)
+%             K = kernal_gaussian(x,control,sigma);
             x_sz = size(x);
-            c_sz = size(control);
-            u = zeros(x_sz);
-            u(:,1) = x(:,1) + alpha() * sum(K());
+            tot_points = numel(x);
+            c_sz = size(control,1);
             
-            for ii = 1:x_sz(1)
-                
-                u(ii,1) = x(ii,1) + sum(alpha(1,:) .* K(ii,:));
-                u(ii,2) = x(ii,2) + sum(alpha(2,:) .* K(ii,:));
-                u(ii,3) = x(ii,3) + sum(alpha(3,:) .* K(ii,:));
+            ux = zeros(x_sz);
+            uy = zeros(x_sz);
+            uz = zeros(x_sz);
+            r1 = zeros(1,c_sz);
+            
+            for ii = 1:tot_points
+                point = [x(ii),y(ii),z(ii)];
+                for jj = 1:c_sz
+                 r1(1,jj) = norm(point - control(jj,:));
+                end
+                ux(ii) = x(ii) + sum(alpha(1,:) .* exp(-r1.^2/(2*sigma^2)));   
+                uy(ii)= y(ii) + sum(alpha(2,:) .* exp(-r1.^2/(2*sigma^2)));
+                uz(ii) = z(ii) + sum(alpha(3,:) .* exp(-r1.^2/(2*sigma^2)));
+%                 u_x(ii,1) = x(ii,1) + sum(alpha(1,:) .* K(ii,:));
+%                 u_y(ii,2) = y(ii,2) + sum(alpha(2,:) .* K(ii,:));
+%                 u_z(ii,3) = z(ii,3) + sum(alpha(3,:) .* K(ii,:));
                 
             end
+            
         end
         
         function K = kernel_gaussian(x,control,sigma)
