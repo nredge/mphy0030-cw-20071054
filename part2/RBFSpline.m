@@ -14,13 +14,13 @@ classdef RBFSpline
 %         end
         
         function alpha = fit(source,target,lambda)
-            sigma = 1;
+            sigma = 0.1;
             p_sz = size(source); % source list of coords for each point 
             n = p_sz(1);
 %             W = zeros(n);
 %            
             alpha = zeros(3,n);
-           K = RBFSpline.kernel_gaussian(source,source,sigma);
+           [K_x,K_y,K_z] = RBFSpline.kernel_gaussian(source(:,1)',source(:,2)',source(:,3)',source,sigma);
 %            for ii = 1:n
 %               W(ii,ii) = 1/(sigma(ii)^2); 
 %            end
@@ -30,60 +30,52 @@ classdef RBFSpline
            
         %Ax = b, least squares problem: (K+lambda*W^-1)Alpha = q_k. x =
         %pinv(A)*b
-          A = (K + lambda*eye(n));
+          A_x = (K_x + lambda*eye(n));
+          A_y = (K_y + lambda*eye(n));
+          A_z = (K_z + lambda*eye(n));
 %           
-%           
-          alpha(1,:) = pinv(A)*q1;
+          alpha(1,:) = pinv(A_x)*q1;
          
 %         
-          alpha(2,:) =pinv(A)*q2;
+          alpha(2,:) =pinv(A_y)*q2;
           
 %          
-          alpha(3,:) = pinv(A)*q3;
+          alpha(3,:) = pinv(A_z)*q3;
         
         end
         
-        function [ux,uy,uz] = evaluate(x,y,z,control,alpha,sigma)
-%             K = kernal_gaussian(x,control,sigma);
-            x_sz = size(x);
-            tot_points = numel(x);
-            c_sz = size(control,1);
+        function [u_x,u_y,u_z] = evaluate(x,y,z,control,alpha,sigma)
             
-            ux = zeros(x_sz);
-            uy = zeros(x_sz);
-            uz = zeros(x_sz);
-            r1 = zeros(1,c_sz);
+       [K_x,K_y,K_z] = RBFSpline.kernel_gaussian(x,y,z,control,sigma);
             
-            for ii = 1:tot_points
-                point = [x(ii),y(ii),z(ii)];
-                for jj = 1:c_sz
-                 r1(1,jj) = norm(point - control(jj,:));
-                end
-                ux(ii) = x(ii) + sum(alpha(1,:) .* exp(-r1.^2/(2*sigma^2)));   
-                uy(ii)= y(ii) + sum(alpha(2,:) .* exp(-r1.^2/(2*sigma^2)));
-                uz(ii) = z(ii) + sum(alpha(3,:) .* exp(-r1.^2/(2*sigma^2)));
-%                 u_x(ii,1) = x(ii,1) + sum(alpha(1,:) .* K(ii,:));
-%                 u_y(ii,2) = y(ii,2) + sum(alpha(2,:) .* K(ii,:));
-%                 u_z(ii,3) = z(ii,3) + sum(alpha(3,:) .* K(ii,:));
-                
-            end
+          K_x = alpha(1,:) .* K_x; 
+            K_y = alpha(2,:) .* K_y; 
+            K_z = alpha(3,:) .* K_z;
             
+            u_x = x' + sum(K_x,2);
+            u_y = y' + sum(K_y,2);
+            u_z = z' + sum(K_z,2);
         end
         
-        function K = kernel_gaussian(x,control,sigma)
+        function [K_x,K_y,K_z] = kernel_gaussian(x,y,z,control,sigma)
             
-            q_sz = size(x); % source list of coords for each point 
-            c_sz = size(control);
-            m = q_sz(1);
-            l = c_sz(1);
-            K = zeros(l,m);
-            for ii = 1:l
-                for jj = 1:m
-                    
-            r1 = norm(x(ii,:) - control(jj,:));
-            K(ii,jj) = exp(-r1^2/(2*sigma^2));
-                end
-            end
+            m = size(x,2); % source list of coords for each point 
+            l = size(control,1);
+            
+            r_x = x'-control(:,1)';
+            r_y = y'-control(:,2)';
+            r_z = z'-control(:,3)';
+            
+            
+%             R = zeros(m,l);
+%             for ii = 1:(m*l)
+%                 R(ii) = norm([r_x(ii) r_y(ii) r_z(ii) ]);
+%                 
+%             end
+            K_x = exp(-r_x.^2 ./(2*sigma^2));
+            K_y = exp(-r_y.^2 ./(2*sigma^2));
+            K_z = exp(-r_z.^2 ./(2*sigma^2));
+          
             
         end
     end
