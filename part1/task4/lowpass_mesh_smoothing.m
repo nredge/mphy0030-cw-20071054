@@ -1,5 +1,7 @@
 function smoothed = lowpass_mesh_smoothing(vertices,triangles,iterations,lambda,mu_ratio)
 
+% set default paramaters for iterations, lambda, and mu based on how many
+% input arguments have been entered
 if nargin == 2
     iterations = 10;
     lambda = 0.9;
@@ -13,35 +15,31 @@ else
    mu = mu_ratio * lambda;
 end
 
-sz = size(vertices);
-n = sz(1);
-summ = zeros(1,3);
-k = 6;
-% omega = 1 / k;
-dist = zeros(n,1);
-% forward = zeros(642,3);
-smoothed = zeros(642,3);
+n = size(vertices,1); % number of vertices
 
-for ii = 1:iterations
-    for jj = 1:n
+
+smoothed = zeros(642,3); %initalise empty array to store smoothed vertices
+
+for ii = 1:iterations %loop for number of iterations
+    for jj = 1:n % loop for each vertex
         
-    tri_ind = find(any(triangles==jj,2));
-    tri = triangles(tri_ind,:);
-    points = unique(tri);
-    points(points == jj) = []; % removes point that is being transformed
-    nn = numel(points); % number of neighbours
+    tri_index = find(any(triangles==jj,2)); % finds all the indices for the triangles (rows in triangles data) that contain the vertex to be transformed  
+    tri = triangles(tri_index,:); % uses the indices to obtain the triangles containing the vertex. This provides the neighbouring vertices indices as well
+    points = unique(tri); % neighbouring vertices will be repeated in the triangles so this removes repeats
+    points(points == jj) = []; % removes vertex that is being transformed so its not included as a neighbour: final list of indices of vertices
+    num_neighbours = numel(points); % number of neighbours 
+    omega = 1 / num_neighbours; % weighting factor
 
-    neighbours = vertices(points,:);
+    neighbours = vertices(points,:); % uses neighbour indices to find coordiantes of neighbours from vertices list
 
-    summation =  (1/nn)*(sum(neighbours(:,:) - vertices(jj,:)));
+    summation =  omega*(sum(neighbours - vertices(jj,:))); % computer sum of differences between each neighbour and vertex to be transformed & multiply by weighting factor
     
-    vertices(jj,:) = vertices(jj,:) + lambda*summation;
-%     end
-%     for jj = 1:n
-    summation =  (1/nn)*(sum(neighbours(:,:) - vertices(jj,:)));
+    vertices(jj,:) = vertices(jj,:) + lambda*summation; % multiply sum by optimisation paramter for 'forward' transform and add onto vertex's original coordinates
     
-    vertices(jj,:) = vertices(jj,:) + mu*summation;
-    smoothed(jj,:) = vertices(jj,:);
+    summation =  omega*(sum(neighbours - vertices(jj,:))); % repeat sum but new vertex position
+    
+    vertices(jj,:) = vertices(jj,:) + mu*summation; % multiply sum now by mu parameter for 'step-back' transform
+    smoothed(jj,:) = vertices(jj,:); % save new position into smoothed matrix
     end
 end
     

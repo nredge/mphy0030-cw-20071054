@@ -14,7 +14,7 @@ classdef RBFSpline
 %         end
         
         function alpha = fit(source,target,lambda)
-            sigma = 0.1;
+            sigma = 5;
             p_sz = size(source); % source list of coords for each point 
             n = p_sz(1);
 %             W = zeros(n);
