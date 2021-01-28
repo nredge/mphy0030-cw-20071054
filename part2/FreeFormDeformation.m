@@ -50,12 +50,10 @@ classdef FreeFormDeformation
             target.control = zeros(size(source));
             
             for ii = 1:prod(num)
-                
-                pos_neg = 2*randi([0 1],1) - 1;
             
-            target.dx = strength * pos_neg* randi([range(1,1),round(range(1,2))],1,1);
-            target.dy = strength * pos_neg* randi([range(2,1),round(range(2,2))],1,1);
-            target.dz = strength * pos_neg* randi([range(3,1),round(range(3,2))],1,1);
+            target.dx = strength * randn(1,1);
+            target.dy = strength * randn(1,1);
+            target.dz = strength * randn(1,1);
             
             
             target.control(ii,1) = source(ii,1) + target.dx;
@@ -90,15 +88,17 @@ classdef FreeFormDeformation
             
         end
         
-        function warp = warp_image(image3d,source,target,sigma)
-            control = image_source(image3d,num)
-            u = evaluate(obj,x,control,alpha,sigma);
+        function [u_x,u_y,u_z] = warp_image(objImage3D,num,rand_strength,lambda,sigma)
             
+            objFFD = FreeFormDeformation.image_source(objImage3D.range,num);
+            target_pts = FreeFormDeformation.random_transform_generator(num,objFFD.image_control,objImage3D.range,rand_strength);
+            alpha = RBFSpline.fit(objFFD.image_control,target_pts.control,lambda,sigma);
+            [u_x,u_y,u_z] = RBFSpline.evaluate(objImage3D.XCoords,objImage3D.YCoords,objImage3D.ZCoords,objFFD.image_control,alpha,sigma);
         end
         
         function random_transform(source,target)
             
-            RBFSpline.fit(source,target,lambda)
+            
         end
     
    

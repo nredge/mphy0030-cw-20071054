@@ -13,8 +13,8 @@ classdef RBFSpline
 %             obj.Property1 = inputArg1 + inputArg2;
 %         end
         
-        function alpha = fit(source,target,lambda)
-            sigma = 2;
+        function alpha = fit(source,target,lambda,sigma)
+            
             p_sz = size(source); % source list of coords for each point 
             n = p_sz(1);
 %             W = zeros(n);
