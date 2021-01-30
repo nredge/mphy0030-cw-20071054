@@ -11,6 +11,7 @@ classdef Image3D
         X
         Y
         Z
+        vol
     end
     
     methods
@@ -24,7 +25,7 @@ classdef Image3D
             image3d.YCoords = (0:sz(2)-1)*voxdims(2);
             image3d.ZCoords = (0:sz(3)-1)*voxdims(3);
            [image3d.X,image3d.Y,image3d.Z] = meshgrid(image3d.XCoords,image3d.YCoords,image3d.ZCoords);
-           
+           image3d.vol = vol;
 %             image3d.coords = zeros(prod(sz),3);
 %             for ii = 1:prod(sz)
 %                image3d.coords(ii,:) = [XCoords(ii),YCoords(ii),ZCoords(ii)]; 

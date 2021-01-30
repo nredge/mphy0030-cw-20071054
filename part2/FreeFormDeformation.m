@@ -88,15 +88,28 @@ classdef FreeFormDeformation
             
         end
         
-        function [u_x,u_y,u_z] = warp_image(objImage3D,num,rand_strength,lambda,sigma)
+        function F = warp_image(objImage3D,objFFD,target_pts,lambda,sigma)
+            
+            
+            alpha = RBFSpline.fit(objFFD.image_control,target_pts.control,lambda,sigma);
+            [u_x,u_y,u_z] = RBFSpline.evaluate(objImage3D.XCoords,objImage3D.YCoords,objImage3D.ZCoords,objFFD.image_control,alpha,sigma);
+            vol_new = cast(objImage3D.vol,'double');
+ 
+%             [Ux,Uy,Uz] = meshgrid(sort(u_x),sort(u_y),sort(u_z));
+            [Ux,Uy,Uz] = meshgrid(u_x,u_y,u_z);
+
+            F = interp3(objImage3D.XCoords,objImage3D.YCoords,objImage3D.ZCoords,vol_new,Ux,Uy,Uz);
+
+           
+            
+        end
+        
+        function F = random_transform(objImage3D,num,rand_strength,lambda,sigma)
             
             objFFD = FreeFormDeformation.image_source(objImage3D.range,num);
             target_pts = FreeFormDeformation.random_transform_generator(num,objFFD.image_control,objImage3D.range,rand_strength);
-            alpha = RBFSpline.fit(objFFD.image_control,target_pts.control,lambda,sigma);
-            [u_x,u_y,u_z] = RBFSpline.evaluate(objImage3D.XCoords,objImage3D.YCoords,objImage3D.ZCoords,objFFD.image_control,alpha,sigma);
-        end
-        
-        function random_transform(source,target)
+            F = FreeFormDeformation.warp_image(objImage3D,objFFD,target_pts,lambda,sigma);
+            
             
             
         end
