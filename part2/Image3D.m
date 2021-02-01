@@ -1,13 +1,18 @@
 classdef Image3D
-    %UNTITLED6 Summary of this class goes here
-    %   Detailed explanation goes here
+    % Class that takes image data vol & voxdims and creates an object that
+    % contains various properties fo the image. These properties are the
+    % range of values in mm for each dimension of the image. Tis is later
+    % used for computer control point coordinates. x, y,
+    % z are arrays of the x, y, and z axis in mm for the image. X, Y,
+    % Z are meshgrids of all of the coordiantes in the image. Vol is the
+    % intesity values of the image volume
     
     properties
         
         range
-        XCoords
-        YCoords
-        ZCoords
+        x
+        y
+        z
         X
         Y
         Z
@@ -16,27 +21,27 @@ classdef Image3D
     
     methods
         function image3d = Image3D(vol,voxdims)
-            %UNTITLED6 Construct an instance of this class
-            %   Detailed explanation goes here
+            % Constructs an object of this class
             sz = size(vol);
-            ind = numel(vol);
             
-            image3d.XCoords = (0:sz(1)-1)*voxdims(1);
-            image3d.YCoords = (0:sz(2)-1)*voxdims(2);
-            image3d.ZCoords = (0:sz(3)-1)*voxdims(3);
-           [image3d.X,image3d.Y,image3d.Z] = meshgrid(image3d.XCoords,image3d.YCoords,image3d.ZCoords);
+            % Creates array for the x,y,z axis in mm using the vol sizes and voxel
+            % dimensions
+            image3d.x = (0:sz(1)-1)*voxdims(1);
+            image3d.y = (0:sz(2)-1)*voxdims(2);
+            image3d.z = (0:sz(3)-1)*voxdims(3);
+            
+            % creates a meshgrid of coordinates for all points in the image
+           [image3d.X,image3d.Y,image3d.Z] = meshgrid(image3d.x,image3d.y,image3d.z);
            image3d.vol = vol;
-%             image3d.coords = zeros(prod(sz),3);
-%             for ii = 1:prod(sz)
-%                image3d.coords(ii,:) = [XCoords(ii),YCoords(ii),ZCoords(ii)]; 
-%             end
-%             
-            min_x = min(image3d.XCoords);
-            max_x = max(image3d.XCoords);
-            min_y = min(image3d.YCoords);
-            max_y = max(image3d.YCoords);
-            min_z = min(image3d.ZCoords);
-            max_z = max(image3d.ZCoords);
+            
+           % obtain the min and max in each direction to form the range of
+           % values
+            min_x = min(image3d.x);
+            max_x = max(image3d.x);
+            min_y = min(image3d.y);
+            max_y = max(image3d.y);
+            min_z = min(image3d.z);
+            max_z = max(image3d.z);
             image3d.range = [min_x,max_x;min_y,max_y;min_z,max_z];
            
         end
