@@ -21,7 +21,8 @@ classdef Image3D
     
     methods
         function image3d = Image3D(vol,voxdims)
-            % Constructs an object of this class
+            % Constructs an object of this class using vol - a 3D matrix, and
+            % voxdims - an array of 3 values listing voxel dimensions in x, y and z.
             sz = size(vol);
             
             % Creates array for the x,y,z axis in mm using the vol sizes and voxel

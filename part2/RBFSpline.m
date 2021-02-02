@@ -20,9 +20,9 @@ classdef RBFSpline
     
     methods (Static)
         function alpha = fit(source,target,lambda,sigma)
-            % function that takes in source points, target points, lambda,
-            % and sigma, and outputs the alpha coefficients. Each row of
-            % alpha corresponds to x, y, and z
+            % function that takes in source points, target points(which are both [n,3] matrices of x,y,z coords), lambda,
+            % and sigma (which are both singular numbers), and outputs the alpha coefficients ([3,n] matrix of cooefficients). Each row of
+            % alpha corresponds to x, y, and z respectively 
             
             % obtain number of points in source points 
             n = size(source,1);
@@ -57,9 +57,18 @@ classdef RBFSpline
         end
         
         function [u_x,u_y,u_z] = evaluate(x,y,z,control,alpha,sigma)
-            
+         % function that takes in x, y, z coordinates as vectors of the query set, a [n,3] matrix of coordiantes for the control set,
+         % and alpha and sigma values. Alpha is a [3,n] matrix where each
+         % row correspons to x, y, z. Sigma is a single value. The output
+         % are vectors of transformed x, y and z.
+         
+         % calls kernel_gaussian function compute K kernel matrices
        [K_x,K_y,K_z] = RBFSpline.kernel_gaussian(x,y,z,control,sigma);
             
+       % u = sum(alpha * R(r)), where each element in K is the
+       % corresponding R. Therefore, the matrices are multiplied by their
+       % respetive alpha coefficients and each row is summed, then added to
+       % the original coordiante.
           K_x = alpha(1,:) .* K_x; 
             K_y = alpha(2,:) .* K_y; 
             K_z = alpha(3,:) .* K_z;
@@ -70,15 +79,22 @@ classdef RBFSpline
         end
         
         function [K_x,K_y,K_z] = kernel_gaussian(x,y,z,control,sigma)
+            % function takes in vectors of x, y, z query coordinates, [n,3]
+            % matrix of control coordiantes (each column is x, y, z), and a
+            % single value sigma. The output are three K matrices of [m,n]
+            % size where m is the number of query points in x,y or z, and n
+            % is the number of control points.
             
-            m = size(x,2); % source list of coords for each point 
-            l = size(control,1);
+           
+            % computes difference between the each of the x, y and z coordinates of
+            % query and control sets, results in a matrix with query points
+            % chagning along the rows, and control points changing along the column
+            r_x = norm(x'-control(:,1)');
+            r_y = norm(y'-control(:,2)');
+            r_z = norm(z'-control(:,3)');
             
-            r_x = abs(x'-control(:,1)');
-            r_y = abs(y'-control(:,2)');
-            r_z = abs(z'-control(:,3)');
-            
-            
+            % computes the Gaussian RBF using the r matrices to generate K
+            % matrices.
             K_x = exp(-r_x.^2 ./(2*sigma^2));
             K_y = exp(-r_y.^2 ./(2*sigma^2));
             K_z = exp(-r_z.^2 ./(2*sigma^2));
