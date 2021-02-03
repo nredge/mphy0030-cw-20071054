@@ -1,6 +1,4 @@
-% load('data/example_vertices.csv');
-% load('data/example_triangles.csv');
-
+clearvars;
 % loads in the vertices and triangles csv files as matrices
 vertices = readmatrix('data/example_vertices.csv');
 triangles = readmatrix('data/example_triangles.csv');
@@ -13,7 +11,7 @@ iterations = [5 10 25];
 % All iterations will be displayed as subplots.
 figure;
 subplot(2,2,1)
-trimesh(triangles,vertices(:,1),vertices(:,2),vertices(:,3));
+trisurf(triangles,vertices(:,1),vertices(:,2),vertices(:,3));
 title('No smoothing');
 
 % The loop runs through each element in iterations per run, creating 3
@@ -26,7 +24,7 @@ for ii = 1:length(iterations)
     
     % plots each iteration run in the figure as a subplot
     subplot(2,2,(ii+1));
-    trimesh(triangles,smoothed(:,1),smoothed(:,2),smoothed(:,3));
+    trisurf(triangles,smoothed(:,1),smoothed(:,2),smoothed(:,3));
     title(sprintf('Smoothing after %i iterations',iterations(ii)));
 end
 

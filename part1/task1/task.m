@@ -1,3 +1,4 @@
+clearvars;
 % load in image data, volume data, vol, and voxel dimensions, voxdims
 load('data/example_image.mat'); 
 
@@ -7,8 +8,8 @@ simple_image_write(vol,voxdims,filename); % write vol & voxdims to a binary file
 
 [image, dims] = simple_image_read(filename,vol,voxdims); % read binary file back into variables
 
-xaxis = dims(1)* 0:223; % create axis array for plots by multiplying voxel dimensions
-yaxis = dims(2)* 0:223; % by array of x & y dimensions
+xaxis = (0:223)*dims(1); % create axis array for plots by multiplying voxel dimensions
+yaxis = (0:223)*dims(2); % by array of x & y dimensions
 
 image = permute(image,[2 1 3]); % swap x & y dimensions to obtain correction orientation
 % as matlab reads column-wise the image appears rotated by 90 degress (x &
@@ -21,23 +22,23 @@ z = randi(30,[1,3]); % select 3 random z values from the 30 z slices for plottin
 figure;
 imagesc(xaxis,yaxis,image(:,:,z(1)));
 colormap gray;
-xlabel('x-dimension');
-ylabel('y-dimension');
+xlabel('x-dimension [mm]');
+ylabel('y-dimension [mm]');
 title(sprintf('Plot at z=%d', z(1)));
 colorbar;
 
 figure;
 imagesc(xaxis,yaxis,image(:,:,z(2)));
 colormap gray;
-xlabel('x-dimension');
-ylabel('y-dimension');
+xlabel('x-dimension [mm]');
+ylabel('y-dimension [mm]');
 title(sprintf('Plot at z=%d', z(2)));
 colorbar;
 
 figure;
 imagesc(xaxis,yaxis,image(:,:,z(3)));
 colormap gray;
-xlabel('x-dimension');
-ylabel('y-dimension');
+xlabel('x-dimension [mm]');
+ylabel('y-dimension [mm]');
 title(sprintf('Plot at z=%d', z(3)));
 colorbar;
